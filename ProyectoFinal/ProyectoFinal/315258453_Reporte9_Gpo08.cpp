@@ -39,7 +39,8 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 float rot = 0.0f;
-
+float mov = 0.0f;
+float mov1 = 0.0f;
 bool anim = false;
 bool anim2 = false;
 
@@ -142,6 +143,8 @@ int main( )
 
     // Load textures
 
+    Model Alfombra((char*)"Models/Alfombra/Alfombra.obj");
+    Model Aspiradora((char*)"Models/Aspiradora/Aspiradora.obj");
     Model Pardo((char*)"Models/Oso/Pardo.obj");
     Model Libro((char*)"Models/Book/Booky2.obj");
     Model Cama((char*)"Models/Cama/Bedy.obj");
@@ -158,6 +161,9 @@ int main( )
     Model Tocadiscos((char*)"Models/Tocadiscos/Tocadiscos.obj");
     Model Pluma((char*)"Models/Tocadiscos/PlumaT.obj");
     Model Acetato((char*)"Models/Tocadiscos/Acetato.obj");
+    Model Mesa((char*)"Models/Mesa/mesaD.obj");
+    Model Buro((char*)"Models/Buro/Buro.obj");
+    Model CajonBuro((char*)"Models/Buro/Cajon.obj");
 
     GLuint texture;
     glGenTextures(1, &texture);
@@ -213,7 +219,24 @@ int main( )
         model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Pardo.Draw(shader);
+        
+        //Aspiradora
 
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(2.0f,2.0f,2.0f));
+        model = glm::translate(model,glm::vec3(0.0f,-1.75f,1.0f));
+        model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f,1.0f,0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        Aspiradora.Draw(shader);
+
+        //Alfombra
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(3.5f,3.5f, 3.5f));
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        Alfombra.Draw(shader);
+        
         //Minion
 
         model = glm::mat4(1);
@@ -253,7 +276,7 @@ int main( )
         //Se preveee jugar con los cajones, para que se puedan meter y sacar
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-        model = glm::translate(model, glm::vec3(2.6f, -1.0f, 0.85f));
+        model = glm::translate(model, glm::vec3(2.6f, -0.875f, 0.85f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Desk.Draw(shader);
@@ -283,14 +306,32 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-        model = glm::translate(model, glm::vec3(-2.3f, 0.0f, 5.0f));
+        model = glm::translate(model, glm::vec3(-2.3f, -0.15f, 5.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Lamp.Draw(shader);
 
+        //Buro
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+        model = glm::translate(model, glm::vec3(-2.3f, -0.75f, 5.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        Buro.Draw(shader);
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+        model = glm::translate(model, glm::vec3(-2.3f, -0.75f, 5.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f,0.0f,mov));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        CajonBuro.Draw(shader);
+
         //Laptop
+
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.5f, -0.45f, 5.0f));
+        model = glm::translate(model, glm::vec3(4.5f, 0.175f, 5.0f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Pc.Draw(shader);
@@ -313,25 +354,34 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         SillaAbajo.Draw(shader);
 
+        //Mesa
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
+        model = glm::translate(model, glm::vec3(4.5f, -1.375f, 5.0f));
+        //model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        Mesa.Draw(shader);
+
         //Tocadiscos
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.35f, 0.06f, 1.2f));
-        model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(4.35f, 0.16f, 1.2f));
+        model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, -0.5f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Pluma.Draw(shader);
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.0f, 0.0f, 1.6f));
+        model = glm::translate(model, glm::vec3(4.0f, 0.1f, 1.6f));
         model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Acetato.Draw(shader);
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.0f, 0.0f, 1.6f));
+        model = glm::translate(model, glm::vec3(4.0f, 0.1f, 1.6f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Tocadiscos.Draw(shader);
 
@@ -397,6 +447,7 @@ void DoMovement( )
         camera.ProcessKeyboard( RIGHT, deltaTime );
     }
 
+
     /*if (keys[GLFW_KEY_O])
     {
         rot += 0.5f;
@@ -404,8 +455,11 @@ void DoMovement( )
 
     if (anim)
     {
-        if (rot < 45.0f)
-            rot += 0.2f;
+        if (rot < 90.0f && mov < 0.95f ){
+            rot += 0.3f;
+            mov += 0.002f;
+            
+        }
         else {
             anim = false;
             anim2 = true;
@@ -413,8 +467,11 @@ void DoMovement( )
     }
     if (anim2)
     {
-        if (rot > 0.0f)
-            rot -= 0.2f;
+        if (rot > -90.0f && mov > 0.0f ) {
+            rot -= 0.3f;
+            mov -= 0.002f;
+        }
+            
         else {
             anim2 = false;
             anim = true;
