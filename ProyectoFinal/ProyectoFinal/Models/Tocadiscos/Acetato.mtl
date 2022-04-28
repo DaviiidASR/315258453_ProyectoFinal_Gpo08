@@ -6,6 +6,12 @@ Tf 1.00 1.00 1.00
 Ni 1.00
 Ks 0.33 0.33 0.33
 Ns 0.06
+newmtl initialShadingGroup
+illum 4
+Kd 0.50 0.50 0.50
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
 newmtl lambert2SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -33,4 +39,18 @@ Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd acetatoT.jpg
+Ni 1.00
+newmtl lambert6SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd acetato.png
+Ni 1.00
+newmtl lambert7SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd Negro.png
 Ni 1.00

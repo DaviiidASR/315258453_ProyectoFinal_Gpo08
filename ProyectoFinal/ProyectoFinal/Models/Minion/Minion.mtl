@@ -62,13 +62,6 @@ Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd MetalT.png
 Ni 1.00
-newmtl lambert11SG
-illum 4
-Kd 0.00 0.00 0.00
-Ka 0.00 0.00 0.00
-Tf 1.00 1.00 1.00
-map_Kd OjoB.png
-Ni 1.00
 newmtl lambert12SG
 illum 4
 Kd 0.00 0.00 0.00
@@ -82,6 +75,13 @@ Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd Dientes.png
+Ni 1.00
+newmtl lambert14SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd Blanco.png
 Ni 1.00
 newmtl wire_000000000
 illum 4

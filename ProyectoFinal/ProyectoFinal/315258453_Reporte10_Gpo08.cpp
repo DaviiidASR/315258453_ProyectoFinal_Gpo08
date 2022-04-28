@@ -21,7 +21,7 @@
 #include "SOIL2/SOIL2.h"
 #include "stb_image.h"
 // Properties
-const GLuint WIDTH = 1280, HEIGHT = 720;
+const GLuint WIDTH = 1680, HEIGHT = 900;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Function prototypes
@@ -31,7 +31,7 @@ void DoMovement( );
 
 
 // Camera
-Camera camera( glm::vec3( 0.0f, 2.0f, 25.0f ) );
+Camera camera( glm::vec3( 0.0f, 30.0f, 95.0f ) );
 bool keys[1024];
 GLfloat lastX = 400, lastY = 300;
 bool firstMouse = true;
@@ -143,15 +143,20 @@ int main( )
 
     // Load textures
 
+    //Model Fachada((char*)"Models/Fachada/FachadaV1/Fachada.obj");
+    //Model FachadaV2((char*)"Models/Fachada/Fachadav2/FachadaV2.obj");
+    /*Model FachadaV3((char*)"Models/Fachada/Fachadav3/FachadaV3.obj");*/
+    //Model FachadaV4((char*)"Models/Fachada/FachadaV4/FachadaV4.obj");
+    Model FachadaV5((char*)"Models/Fachada/FachadaV5/FachadaV5.obj");
     Model Alfombra((char*)"Models/Alfombra/Alfombra.obj");
     Model Aspiradora((char*)"Models/Aspiradora/Aspiradora.obj");
-    Model Pardo((char*)"Models/Oso/Pardo.obj");
-    Model Libro((char*)"Models/Book/Booky2.obj");
+    Model Polar((char*)"Models/Oso/Polarcito.obj");
     Model Cama((char*)"Models/Cama/Bedy.obj");
     Model Minion((char*)"Models/Minion/Minion.obj");
     Model MiOjoMov((char*)"Models/Minion/MiOjoMov.obj");
     Model Desk((char*)"Models/Mueble/desk.obj");
     Model Estante((char*)"Models/Mueble/Estante.obj");
+    Model Librero((char*)"Models/Librero/Librero.obj");
     Model Star((char*)"Models/PEstrella/Pestrella1.obj");
     Model Cat((char*)"Models/Gato/gatito.obj");
     Model Lamp((char*)"Models/Lamp/Lamp.obj");
@@ -164,6 +169,12 @@ int main( )
     Model Mesa((char*)"Models/Mesa/mesaD.obj");
     Model Buro((char*)"Models/Buro/Buro.obj");
     Model CajonBuro((char*)"Models/Buro/Cajon.obj");
+    Model Revista2C((char*)"Models/Revistas/Revista2C.obj");
+    Model RevistaS((char*)"Models/Revistas/RevistaS.obj");
+    Model RevistaA((char*)"Models/Revistas/RevistaA.obj");
+
+
+
 
     GLuint texture;
     glGenTextures(1, &texture);
@@ -175,20 +186,6 @@ int main( )
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-  
-    image = stbi_load("images/BookyT.png", &textureWidth, &textureHeight, &nrChannels, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    if (image)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(image);
 
     // Game loop
     while (!glfwWindowShouldClose(window))
@@ -213,13 +210,22 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
         // Draw the loaded model
-        //pardo
+        //Polar
         glm::mat4 model(1);
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));
+        model = glm::translate(model, glm::vec3(0.0f, -0.8f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        Pardo.Draw(shader);
+        Polar.Draw(shader);
         
+        //Fachada
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(5.5f, 5.5f, 5.5f));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.5f, -0.8f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        FachadaV5.Draw(shader);
+
         //Aspiradora
 
         model = glm::mat4(1);
@@ -232,7 +238,7 @@ int main( )
         //Alfombra
 
         model = glm::mat4(1);
-        model = glm::scale(model, glm::vec3(3.5f,3.5f, 3.5f));
+        model = glm::scale(model, glm::vec3(5.5f,3.5f, 3.5f));
         model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Alfombra.Draw(shader);
@@ -263,20 +269,20 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Cama.Draw(shader);
 
-        //Estante
-        //se plantea jugar con los libros haciendo que se caigan y vuelvana a su posicion
-        model = glm::mat4(1);       
-        model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-        model = glm::translate(model, glm::vec3(-3.0f, -1.0f, -1.0f));
+        //Librero
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(3.8f, 3.8f, 3.8f));
+        model = glm::translate(model, glm::vec3(-4.0f, -1.0f, -1.0f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        Estante.Draw(shader);
+        Librero.Draw(shader);
 
         //Mueble
         //Se preveee jugar con los cajones, para que se puedan meter y sacar
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-        model = glm::translate(model, glm::vec3(2.6f, -0.875f, 0.85f));
+        model = glm::translate(model, glm::vec3(3.6f, -0.875f, 0.85f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Desk.Draw(shader);
@@ -306,7 +312,7 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-        model = glm::translate(model, glm::vec3(-2.3f, -0.15f, 5.0f));
+        model = glm::translate(model, glm::vec3(-3.3f, -0.15f, 4.5f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Lamp.Draw(shader);
 
@@ -314,14 +320,14 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-        model = glm::translate(model, glm::vec3(-2.3f, -0.75f, 5.0f));
+        model = glm::translate(model, glm::vec3(-3.3f, -0.75f, 5.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Buro.Draw(shader);
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-        model = glm::translate(model, glm::vec3(-2.3f, -0.75f, 5.0f));
+        model = glm::translate(model, glm::vec3(-3.3f, -0.75f, 5.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         model = glm::translate(model, glm::vec3(0.0f,0.0f,mov));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -331,7 +337,7 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.5f, 0.175f, 5.0f));
+        model = glm::translate(model, glm::vec3(6.0f, 0.175f, 5.0f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Pc.Draw(shader);
@@ -340,7 +346,7 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-        model = glm::translate(model, glm::vec3(3.0f, -0.75f, 6.0f));
+        model = glm::translate(model, glm::vec3(5.5f, -0.75f, 6.0f));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -348,7 +354,7 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-        model = glm::translate(model, glm::vec3(3.0f, -0.75f, 6.0f));  
+        model = glm::translate(model, glm::vec3(5.5f, -0.75f, 6.0f));  
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -358,7 +364,7 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.5f, -1.375f, 5.0f));
+        model = glm::translate(model, glm::vec3(6.0f, -1.375f, 5.0f));
         //model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Mesa.Draw(shader);
@@ -367,33 +373,55 @@ int main( )
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.35f, 0.16f, 1.2f));
+        model = glm::translate(model, glm::vec3(5.85f, 0.16f, 1.2f));
         model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, -0.5f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Pluma.Draw(shader);
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.0f, 0.1f, 1.6f));
+        model = glm::translate(model, glm::vec3(5.5f, 0.1f, 1.6f));
         model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, -1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Acetato.Draw(shader);
 
         model = glm::mat4(1);
         model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
-        model = glm::translate(model, glm::vec3(4.0f, 0.1f, 1.6f));
+        model = glm::translate(model, glm::vec3(5.5f, 0.1f, 1.6f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         Tocadiscos.Draw(shader);
 
-        //libro
-        //Problema con la textura, se pone la imagen, cuando elimino la parte de arriba de incluir la imagen
-        //desaparece el moedlo del libro
+
+        //Revistas
+
+        //Revista Abierta
+
         model = glm::mat4(1);     
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f)); 
+        model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
+        model = glm::translate(model, glm::vec3(17.0f, -14.0f, -7.5f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));       
+        Revista2C.Draw(shader);
+
+        //Revista Cerrada
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(0.8f, 0.8f, 0.8f));
+        model = glm::translate(model, glm::vec3(-6.0f, -4.1f, -2.5f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        glDrawElements(GL_TRIANGLES, 6, GL_FLAT, 0);
-        Libro.Draw(shader);
+        RevistaS.Draw(shader);
+
+        //Revista Amontonada
+
+        model = glm::mat4(1);
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+        model = glm::translate(model, glm::vec3(-3.0f, -3.0f, 2.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+        RevistaA.Draw(shader);
+
 
         glBindVertexArray(0);
 
@@ -407,7 +435,6 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         // Swap the buffers
@@ -455,8 +482,8 @@ void DoMovement( )
 
     if (anim)
     {
-        if (rot < 90.0f && mov < 0.95f ){
-            rot += 0.3f;
+        if (rot < 45.0f && mov < 0.95f ){
+            rot += 0.4f;
             mov += 0.002f;
             
         }
@@ -467,8 +494,8 @@ void DoMovement( )
     }
     if (anim2)
     {
-        if (rot > -90.0f && mov > 0.0f ) {
-            rot -= 0.3f;
+        if (rot > 15.0f && mov > 0.0f ) {
+            rot -= 0.4f;
             mov -= 0.002f;
         }
             
