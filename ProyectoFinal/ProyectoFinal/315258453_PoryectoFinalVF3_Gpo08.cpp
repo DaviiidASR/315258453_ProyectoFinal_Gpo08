@@ -30,13 +30,15 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 void MouseCallback(GLFWwindow *window, double xPos, double yPos);
 void DoMovement();
 void animacion();
+void animacion2();
 
 // Window dimensions
 const GLuint WIDTH = 1366, HEIGHT = 780;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 // Camera
-Camera  camera(glm::vec3(10.0f, 0.0f, 10.0f));
+//Camera  camera(glm::vec3(10.0f, 0.0f, 10.0f));
+Camera camera(glm::vec3(0.0f, 25.0f, 135.0f));
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -57,18 +59,19 @@ glm::vec3 PosIni(0.0f, -3.5f, -3.0f);
 glm::vec3 PosIni1(-9.5f, 4.6f, -2.0f);
 
 bool active;
-
+bool active1;
 
 // Deltatime
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
 
 // Keyframes
-float posX =PosIni.x, posY = PosIni.y, posZ = PosIni.z, posX1 = PosIni1.x, posY1 = PosIni1.y, posZ1 = PosIni1.z, rotRodIzq,rotRodDer ,rotBraDer,rotBraIzq,rotAsp, rotBal, rotRodIzq1, rotRodDer1, rotBraDer1, rotBraIzq1;
+float posX = PosIni.x, posY = PosIni.y, posZ = PosIni.z, posX1 = PosIni1.x , posY1 = PosIni1.y , posZ1 = PosIni1.z, rotRodIzq, rotRodDer ,rotBraDer ,rotBraIzq , rotBal;
 
-#define MAX_FRAMES 9
+#define MAX_FRAMES 17
 int i_max_steps = 190;
 int i_curr_steps = 0;
+int i_curr_steps1 = 0;
 //Estrucutra para definir todas las variables de frames
 typedef struct _frame
 {
@@ -98,36 +101,29 @@ typedef struct _frame
 	float rotInc3 ;
 	float rotInc4 ;
 
-	float rotAsp;
+
 	float rotBal;
-	float rotInc5;
 	float rotInc6;
-
-	float rotRodIzq1;
-	float rotInc7;
-	float rotRodDer1;
-	float rotInc8;
-
-	float rotBraIzq1;
-	float rotBraDer1;
-	float rotInc9;
-	float rotInc10;
 
 
 }FRAME;
 //Declaracion de variables globales
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 0;			
+FRAME KeyFrame1[MAX_FRAMES];
+int FrameIndex = 0;
+int FrameIndex1 = 0;
 bool play = false;
+bool play2 = false;
 int playIndex = 0;
+int playIndex1 = 0;
 
 // Positions of the point lights
 glm::vec3 pointLightPositions[] = {
 	//Posiciones de la matriz para los pointlight
-	glm::vec3(-12.5f, 6.0f, 5.5f),
-	glm::vec3(-10.0f, 1.2f, 13.3f),
-	glm::vec3(9.0f, 7.0f, 16.0f),
-	glm::vec3(14.5f, 1.0f, 12.0f)
+	glm::vec3(-12.5f, 6.0f, 5.5f),//ventana cortina
+	glm::vec3(-10.0f, 1.2f, 13.3f),//lampara
+	glm::vec3(9.0f, 7.0f, 16.0f),//laptop
+	glm::vec3(14.5f, 1.0f, 12.0f)// ventana
 };
 
 //Con este apartado linkeamos nuestros pointlights con iluminacion dinamica, para controlarla mediante teclas
@@ -140,7 +136,7 @@ glm::vec3 LightP4;
 void saveFrame(void)
 {
 
-	printf("frameindex %d\n", FrameIndex);
+	
 	
 	KeyFrame[FrameIndex].posX = posX;
 	KeyFrame[FrameIndex].posY = posY;
@@ -156,18 +152,15 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].rotBraIzq = rotBraIzq;
 	KeyFrame[FrameIndex].rotBraDer = rotBraDer;
 
-	KeyFrame[FrameIndex].rotRodIzq1 = rotRodIzq1;
-	KeyFrame[FrameIndex].rotRodDer1 = rotRodDer1;
-
-	KeyFrame[FrameIndex].rotBraIzq1 = rotBraIzq1;
-	KeyFrame[FrameIndex].rotBraDer1 = rotBraDer1;
-
-	KeyFrame[FrameIndex].rotAsp = rotAsp;
-
-	KeyFrame[FrameIndex].rotBal = rotBal;
-	
-
 	FrameIndex++;
+}
+
+void saveFrame1(void) {
+
+	printf("frameindex %d\n", FrameIndex1);
+	KeyFrame1[FrameIndex1].rotBal = rotBal;
+	
+	FrameIndex1++;
 }
 //Se reinician los elementos de nuestro proyecto
 //Nosotros para la animacion no la utilizamos, solo si deseamos hacerla ciclica
@@ -177,26 +170,21 @@ void resetElements(void)
 	posY = KeyFrame[0].posY;
 	posZ = KeyFrame[0].posZ;
 
-	posX1 = KeyFrame[0].posX1;
-	posY1 = KeyFrame[0].posY1;
-	posZ1 = KeyFrame[0].posZ1;
+	
 
 	rotRodIzq = KeyFrame[0].rotRodIzq;
 	rotRodDer = KeyFrame[0].rotRodDer;
 
 	rotBraIzq = KeyFrame[0].rotBraIzq;
 	rotBraDer = KeyFrame[0].rotBraDer;
+}
 
-	rotRodIzq = KeyFrame[0].rotRodIzq1;
-	rotRodDer = KeyFrame[0].rotRodDer1;
+void resetElements1(void) {
 
-	rotBraIzq = KeyFrame[0].rotBraIzq1;
-	rotBraDer = KeyFrame[0].rotBraDer1;
-
-	rotAsp = KeyFrame[0].rotAsp;
-
-	rotBal = KeyFrame[0].rotBal;
-
+	posX1 = KeyFrame1[0].posX1;
+	posY1 = KeyFrame1[0].posY1;
+	posZ1 = KeyFrame1[0].posZ1;
+	rotBal = KeyFrame1[0].rotBal;
 }
 //Funcion de interpolacion, nos indica en que posicion y que keyframe se esta seleccionando
 void interpolation(void)
@@ -206,41 +194,31 @@ void interpolation(void)
 	KeyFrame[playIndex].incY = (KeyFrame[playIndex + 1].posY - KeyFrame[playIndex].posY) / i_max_steps;
 	KeyFrame[playIndex].incZ = (KeyFrame[playIndex + 1].posZ - KeyFrame[playIndex].posZ) / i_max_steps;
 
-	KeyFrame[playIndex].incX1 = (KeyFrame[playIndex + 1].posX1 - KeyFrame[playIndex].posX1) / i_max_steps;
-	KeyFrame[playIndex].incY1 = (KeyFrame[playIndex + 1].posY1 - KeyFrame[playIndex].posY1) / i_max_steps;
-	KeyFrame[playIndex].incZ1 = (KeyFrame[playIndex + 1].posZ1 - KeyFrame[playIndex].posZ1) / i_max_steps;
+	
 	
 	KeyFrame[playIndex].rotInc = (KeyFrame[playIndex + 1].rotRodIzq - KeyFrame[playIndex].rotRodIzq) / i_max_steps;
 	KeyFrame[playIndex].rotInc2 = (KeyFrame[playIndex + 1].rotRodDer - KeyFrame[playIndex].rotRodDer) / i_max_steps;
 	KeyFrame[playIndex].rotInc3 = (KeyFrame[playIndex + 1].rotBraIzq - KeyFrame[playIndex].rotBraIzq) / i_max_steps;
 	KeyFrame[playIndex].rotInc4 = (KeyFrame[playIndex + 1].rotBraDer - KeyFrame[playIndex].rotBraDer) / i_max_steps;
 
-	KeyFrame[playIndex].rotInc5 = (KeyFrame[playIndex + 1].rotAsp - KeyFrame[playIndex].rotAsp) / i_max_steps;
-
-	KeyFrame[playIndex].rotInc6 = (KeyFrame[playIndex + 1].rotBal - KeyFrame[playIndex].rotBal) / i_max_steps;
-
-	KeyFrame[playIndex].rotInc7 = (KeyFrame[playIndex + 1].rotRodIzq1 - KeyFrame[playIndex].rotRodIzq1) / i_max_steps;
-	KeyFrame[playIndex].rotInc8 = (KeyFrame[playIndex + 1].rotRodDer1 - KeyFrame[playIndex].rotRodDer1) / i_max_steps;
-	KeyFrame[playIndex].rotInc9 = (KeyFrame[playIndex + 1].rotBraIzq1 - KeyFrame[playIndex].rotBraIzq1) / i_max_steps;
-	KeyFrame[playIndex].rotInc10 = (KeyFrame[playIndex + 1].rotBraDer1 - KeyFrame[playIndex].rotBraDer1) / i_max_steps;
-
+	
 }
-//Funci[on que indicara la posicion de nuestro(s) modelo(s) a animar
+
+void interpolation2(void) {
+
+	KeyFrame1[playIndex1].incX1 = (KeyFrame1[playIndex1 + 1].posX1 - KeyFrame1[playIndex1].posX1) / i_max_steps;
+	KeyFrame1[playIndex1].incY1 = (KeyFrame1[playIndex1 + 1].posY1 - KeyFrame1[playIndex1].posY1) / i_max_steps;
+	KeyFrame1[playIndex1].incZ1 = (KeyFrame1[playIndex1 + 1].posZ1 - KeyFrame1[playIndex1].posZ1) / i_max_steps;
+
+	KeyFrame1[playIndex1].rotInc6 = (KeyFrame1[playIndex1 + 1].rotBal - KeyFrame1[playIndex1].rotBal) / i_max_steps;
+}
+//Funcion que indicara la posicion de nuestro(s) modelo(s) a animar
 void Sali(void) {
 
 	KeyFrame[0].posZ = 0;
 	KeyFrame[0].incX = 0;
 	KeyFrame[0].incY = 0;
 	KeyFrame[0].incZ = 0;
-
-	KeyFrame[0].posX1 = 0;
-	KeyFrame[0].posY1 = 0;
-	KeyFrame[0].posZ1 = 0;
-	KeyFrame[0].incX1 = 0;
-	KeyFrame[0].incY1 = 0;
-	KeyFrame[0].incZ1 = 0;
-	KeyFrame[0].rotBal = 0;
-	KeyFrame[0].rotInc6 = 0;
 
 	KeyFrame[0].rotRodIzq = -20;
 	KeyFrame[0].rotInc = 0;
@@ -250,6 +228,7 @@ void Sali(void) {
 	KeyFrame[0].rotInc3 = 0;
 	KeyFrame[0].rotBraDer = -120;
 	KeyFrame[0].rotInc4 = 0;
+
 	FrameIndex=0;
 	i_curr_steps=0 ;
 
@@ -257,15 +236,6 @@ void Sali(void) {
 	KeyFrame[1].incX = 0;
 	KeyFrame[1].incY = 0;
 	KeyFrame[1].incZ = 0;
-
-	KeyFrame[1].posX1 = 0;
-	KeyFrame[1].posY1 = 0;
-	KeyFrame[1].posZ1 = 0;
-	KeyFrame[1].incX1 = 0;
-	KeyFrame[1].incY1 = 0;
-	KeyFrame[1].incZ1 = 0;
-	KeyFrame[1].rotBal = 130;
-	KeyFrame[1].rotInc6 = 0;
 
 	KeyFrame[1].rotRodIzq = 20;
 	KeyFrame[1].rotInc = 0;
@@ -275,6 +245,7 @@ void Sali(void) {
 	KeyFrame[1].rotInc3 = 0;
 	KeyFrame[1].rotBraDer = 120;
 	KeyFrame[1].rotInc4 = 0;
+
 	FrameIndex = 1;
 	i_curr_steps = 1;
 
@@ -282,15 +253,6 @@ void Sali(void) {
 	KeyFrame[2].incX = 0;
 	KeyFrame[2].incY = 0;
 	KeyFrame[2].incZ = 0;
-
-	KeyFrame[2].posX1 = 0;
-	KeyFrame[2].posY1 = 0;
-	KeyFrame[2].posZ1 = 0;
-	KeyFrame[2].incX1 = 0;
-	KeyFrame[2].incY1 = 0;
-	KeyFrame[2].incZ1 = 0;
-	KeyFrame[2].rotInc6 = 0;
-	KeyFrame[2].rotBal = 0;
 
 	KeyFrame[2].rotRodIzq = -20;
 	KeyFrame[2].rotInc = 0;
@@ -300,6 +262,7 @@ void Sali(void) {
 	KeyFrame[2].rotInc3 = 0;
 	KeyFrame[2].rotBraDer = -120;
 	KeyFrame[2].rotInc4 = 0;
+
 	FrameIndex = 2;
 	i_curr_steps = 2;
 
@@ -307,15 +270,6 @@ void Sali(void) {
 	KeyFrame[3].incX = 0;
 	KeyFrame[3].incY = 0;
 	KeyFrame[3].incZ = 0;
-
-	KeyFrame[3].posX1 = 0;
-	KeyFrame[3].posY1 = 0;
-	KeyFrame[3].posZ1 = 0;
-	KeyFrame[3].incX1 = 0;
-	KeyFrame[3].incY1 = 0;
-	KeyFrame[3].incZ1 = 0;
-	KeyFrame[3].rotInc6 = 0;
-	KeyFrame[3].rotBal = 130;
 
 	KeyFrame[3].rotRodIzq = 20;
 	KeyFrame[3].rotInc = 0;
@@ -325,6 +279,7 @@ void Sali(void) {
 	KeyFrame[3].rotInc3 = 0;
 	KeyFrame[3].rotBraDer = 120;
 	KeyFrame[3].rotInc4 = 0;
+
 	FrameIndex = 3;
 	i_curr_steps = 3;
 
@@ -332,15 +287,6 @@ void Sali(void) {
 	KeyFrame[4].incX = 0;
 	KeyFrame[4].incY = 0;
 	KeyFrame[4].incZ = 0;
-
-	KeyFrame[4].posX1 = 0;
-	KeyFrame[4].posY1 = 0;
-	KeyFrame[4].posZ1 = 0;
-	KeyFrame[4].incX1 = 0;
-	KeyFrame[4].incY1 = 0;
-	KeyFrame[4].incZ1 = 0;
-	KeyFrame[4].rotInc6 = 0;
-	KeyFrame[4].rotBal = 0;
 
 	KeyFrame[4].rotRodIzq = -20;
 	KeyFrame[4].rotInc = 0;
@@ -350,6 +296,7 @@ void Sali(void) {
 	KeyFrame[4].rotInc3 = 0;
 	KeyFrame[4].rotBraDer = -120;
 	KeyFrame[4].rotInc4 = 0;
+
 	FrameIndex = 4;
 	i_curr_steps = 4;
 
@@ -357,15 +304,6 @@ void Sali(void) {
 	KeyFrame[5].incX = 0;
 	KeyFrame[5].incY = 0;
 	KeyFrame[5].incZ = 0;
-
-	KeyFrame[5].posX1 = 0;
-	KeyFrame[5].posY1 = 0;
-	KeyFrame[5].posZ1 = 0;
-	KeyFrame[5].incX1 = 0;
-	KeyFrame[5].incY1 = 0;
-	KeyFrame[5].incZ1 = 0;
-	KeyFrame[5].rotInc6 = 0;
-	KeyFrame[5].rotBal = 130;
 
 	KeyFrame[5].rotRodIzq = 20;
 	KeyFrame[5].rotInc = 0;
@@ -375,6 +313,7 @@ void Sali(void) {
 	KeyFrame[5].rotInc3 = 0;
 	KeyFrame[5].rotBraDer = 120;
 	KeyFrame[5].rotInc4 = 0;
+
 	FrameIndex = 5;
 	i_curr_steps = 5;
 
@@ -382,16 +321,6 @@ void Sali(void) {
 	KeyFrame[6].incX = 0;
 	KeyFrame[6].incY = 0;
 	KeyFrame[6].incZ = 0;
-
-	KeyFrame[6].posX1 = 0;
-	KeyFrame[6].posY1 = -5;
-	KeyFrame[6].posZ1 = 15;
-
-	KeyFrame[6].incX1 = 0;
-	KeyFrame[6].incY1 = 0;
-	KeyFrame[6].incZ1 = 0;
-	KeyFrame[6].rotInc6 = 0;
-	KeyFrame[6].rotBal = 0;
 
 	KeyFrame[6].rotRodIzq = -20;
 	KeyFrame[6].rotInc = 0;
@@ -401,6 +330,7 @@ void Sali(void) {
 	KeyFrame[6].rotInc3 = 0;
 	KeyFrame[6].rotBraDer = -120;
 	KeyFrame[6].rotInc4 = 0;
+
 	FrameIndex = 6;
 	i_curr_steps = 6;
 
@@ -408,15 +338,6 @@ void Sali(void) {
 	KeyFrame[7].incX = 0;
 	KeyFrame[7].incY = 0;
 	KeyFrame[7].incZ = 0;
-
-	KeyFrame[7].posX1 = 0;
-	KeyFrame[7].posY1 = 0;
-	KeyFrame[7].posZ1 = 0;
-	KeyFrame[7].incX1 = 0;
-	KeyFrame[7].incY1 = 0;
-	KeyFrame[7].incZ1 = 0;
-	KeyFrame[7].rotInc6 = 0;
-	KeyFrame[7].rotBal = 130;
 
 	KeyFrame[7].rotRodIzq = 20;
 	KeyFrame[7].rotInc = 0;
@@ -434,15 +355,6 @@ void Sali(void) {
 	KeyFrame[8].incY = 0;
 	KeyFrame[8].incZ = 0;
 
-	KeyFrame[8].posX1 = 0;
-	KeyFrame[8].posY1 = 6;
-	KeyFrame[8].posZ1 = 20;
-	KeyFrame[8].incX1 = 0;
-	KeyFrame[8].incY1 = 0;
-	KeyFrame[8].incZ1 = 0;
-	KeyFrame[8].rotInc6 = 0;
-	KeyFrame[8].rotBal = 0;
-
 	KeyFrame[8].rotRodIzq = -20;
 	KeyFrame[8].rotInc = 0;
 	KeyFrame[8].rotRodDer = 20;
@@ -455,6 +367,133 @@ void Sali(void) {
 	i_curr_steps = 8;
 
 	//saveFrame();
+}
+void Sali2(void) {
+
+	KeyFrame[9].posX1 = 0;
+	KeyFrame[9].posY1 = 2;
+	KeyFrame[9].posZ1 = 0;
+
+	KeyFrame[9].incX1 = 0.001;
+	KeyFrame[9].incY1 = 0;
+	KeyFrame[9].incZ1 = 0;
+
+	KeyFrame[9].rotBal = 0;
+	KeyFrame[9].rotInc6 = 1;
+
+	FrameIndex1 = 0;
+	i_curr_steps1 = 0;
+
+	KeyFrame[10].posX1 = 0;
+	KeyFrame[10].posY1 = 0;
+	KeyFrame[10].posZ1 = 0;
+
+	KeyFrame[10].incX1 = 0;
+	KeyFrame[10].incY1 = 0;
+	KeyFrame[10].incZ1 = 0;
+
+	KeyFrame[10].rotBal = 90;
+	KeyFrame[10].rotInc6 = 1;
+
+	FrameIndex1 = 1;
+	i_curr_steps1 = 1;
+
+	KeyFrame[11].posX1 = 0;
+	KeyFrame[11].posY1 = 2;
+	KeyFrame[11].posZ1 = 0;
+
+	KeyFrame[11].incX1 = 0;
+	KeyFrame[11].incY1 = 0;
+	KeyFrame[11].incZ1 = 0;
+
+	KeyFrame[11].rotInc6 = 0;
+	KeyFrame[11].rotBal = 1;
+
+	FrameIndex1 = 2;
+	i_curr_steps1 = 2;
+
+	KeyFrame[12].posX1 = 0;
+	KeyFrame[12].posY1 = 0;
+	KeyFrame[12].posZ1 = 0;
+
+	KeyFrame[12].incX1 = 0;
+	KeyFrame[12].incY1 = 0;
+	KeyFrame[12].incZ1 = 0;
+
+	KeyFrame[12].rotInc6 = 0;
+	KeyFrame[12].rotBal = 90;
+
+	FrameIndex1 = 3;
+	i_curr_steps1 = 3;
+
+	KeyFrame[13].posX1 = 0;
+	KeyFrame[13].posY1 = 2;
+	KeyFrame[13].posZ1 = 0;
+
+	KeyFrame[13].incX1 = 0;
+	KeyFrame[13].incY1 = 0;
+	KeyFrame[13].incZ1 = 0;
+
+	KeyFrame[13].rotInc6 = 1;
+	KeyFrame[13].rotBal = 0;
+
+	FrameIndex1 = 4;
+	i_curr_steps1 = 4;
+
+	KeyFrame[14].posX1 = 0;
+	KeyFrame[14].posY1 = 0;
+	KeyFrame[14].posZ1 = 0;
+
+	KeyFrame[14].incX1 = 0;
+	KeyFrame[14].incY1 = 0;
+	KeyFrame[14].incZ1 = 0;
+
+	KeyFrame[14].rotInc6 = 1;
+	KeyFrame[14].rotBal = 90;
+
+	FrameIndex1 = 5;
+	i_curr_steps1 = 5;
+
+	KeyFrame[15].posX1 = 0;
+	KeyFrame[15].posY1 = 2;
+	KeyFrame[15].posZ1 = 0;
+
+	KeyFrame[15].incX1 = 0;
+	KeyFrame[15].incY1 = 0;
+	KeyFrame[15].incZ1 = 0;
+
+	KeyFrame[15].rotInc6 = 1;
+	KeyFrame[15].rotBal = 0;
+
+	FrameIndex1 = 6;
+	i_curr_steps1 = 6;
+
+	KeyFrame[16].posX1 = 0;
+	KeyFrame[16].posY1 = 0;
+	KeyFrame[16].posZ1 = 0;
+
+	KeyFrame[16].incX1 = 0;
+	KeyFrame[16].incY1 = 0;
+	KeyFrame[16].incZ1 = 0;
+	KeyFrame[16].rotInc6 = 0;
+	KeyFrame[16].rotBal = 90;
+
+	FrameIndex1 = 7;
+	i_curr_steps1 = 7;
+
+	KeyFrame[17].posX1 = 0;
+	KeyFrame[17].posY1 = 2;
+	KeyFrame[17].posZ1 = 0;
+
+	KeyFrame[17].incX1 = 0;
+	KeyFrame[17].incY1 = 0;
+	KeyFrame[17].incZ1 = 0;
+
+	KeyFrame[17].rotInc6 = 1;
+	KeyFrame[17].rotBal = 0;
+	
+	FrameIndex1 = 8;
+	i_curr_steps1 = 8;
 }
 
 //funcion principal
@@ -524,23 +563,11 @@ int main()
 	Model BrazoIzquierdoHacha((char*)"Models/Oso/BrazoIzquierdoHacha.obj");
 
 	//Soccer
-	//MujerSoccer
 
-	/*Model SocBod((char*)"Models/Soccer/SocBod.obj");
-	Model RLeg((char*)"Models/Soccer/RLeg.obj");
-	Model LLeg((char*)"Models/Soccer/LLeg.obj");
-	Model RArm((char*)"Models/Soccer/RArm.obj");
-	Model LArm((char*)"Models/Soccer/LArm.obj");*/
-
-	//PorteriaBalon
 	Model Balon((char*)"Models/Soccer/Balon.obj");
-	/*Model Net((char*)"Models/Soccer/Net.obj");*/
-
-
 
 	//Aspiradora
 	Model Aspiradora((char*)"Models/Aspiradora/Aspiradora.obj");
-	Model Aspiradora1((char*)"Models/Aspiradora/Aspiradora1.obj");
 
 	//Alfombra
 	Model Alfombra((char*)"Models/Alfombra/Alfombra.obj");
@@ -549,7 +576,6 @@ int main()
 	Model Cama((char*)"Models/Cama/Bedy.obj");
 	Model Minion((char*)"Models/Minion/Minion.obj");
 	Model MiOjoMov((char*)"Models/Minion/MiOjoMov.obj");
-	Model Star((char*)"Models/Estrella/Star.obj");
 	Model Cat((char*)"Models/Gato/Cat.obj");
 
 	//Librero
@@ -945,78 +971,14 @@ int main()
 		BrazoIzquierdoHacha.Draw(lightingShader);
 
 		//Soccer
-		//Mujer Soccer
-		//Cuerpo
-
-		/*model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodDer1), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		SocBod.Draw(lightingShader);*/
-
-		//Brazo derecho
-
-		/*view = camera.GetViewMatrix();
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodDer1), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		RArm.Draw(lightingShader);*/
-
-		//Brazo Izquierdo
-
-		/*view = camera.GetViewMatrix();
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodDer1), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		LArm.Draw(lightingShader);*/
-
-		//Pierna Derecha
-
-		/*view = camera.GetViewMatrix();
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodDer1), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		RLeg.Draw(lightingShader);*/
-
-		//Pierna Izquierda
-
-		/*model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodDer1), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		LLeg.Draw(lightingShader);*/
 
 		//Balon
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		//model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::rotate(model, glm::radians(-rotBal), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(-rotBal), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Balon.Draw(lightingShader);
-
-		//Porteria
-
-		/*model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(posX1, posY1, posZ1));
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-		model = glm::rotate(model, glm::radians(rot), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(-rotRodDer1), glm::vec3(1.0f, 0.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Net.Draw(lightingShader);*/
 
 		//Fachada
 
@@ -1032,7 +994,6 @@ int main()
 		model = glm::mat4(1);
 		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 		model = glm::translate(model, glm::vec3(0.15f, -1.7f, 1.25f));
-		model = glm::rotate(model, glm::radians(-rotAsp), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Aspiradora.Draw(lightingShader);
 
@@ -1068,15 +1029,6 @@ int main()
 		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Cat.Draw(lightingShader);
-
-		//Estrella
-
-		model = glm::mat4(1);
-		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::translate(model, glm::vec3(2.5f, -1.0f, 11.7f));
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		Star.Draw(lightingShader);
 
 		// Minion
 
@@ -1334,22 +1286,55 @@ void animacion()
 				posY += KeyFrame[playIndex].incY;
 				posZ += KeyFrame[playIndex].incZ;
 
-				posX1 += KeyFrame[playIndex].incX1;
-				posY1 += KeyFrame[playIndex].incY1;
-				posZ1 += KeyFrame[playIndex].incZ1;
-
 				rotRodIzq += KeyFrame[playIndex].rotInc;
 				rotRodDer += KeyFrame[playIndex].rotInc2;
 				rotBraDer += KeyFrame[playIndex].rotInc3;
 				rotBraIzq += KeyFrame[playIndex].rotInc4;
-
-				rotBal += KeyFrame[playIndex].rotInc6;
 
 				i_curr_steps++;
 			}
 
 		}
 	}
+
+void animacion2()
+{
+
+	//Movimiento del personaje
+
+	if (play2)
+	{
+		if (i_curr_steps1 >= i_max_steps) //end of animation between frames?
+		{
+			playIndex1++;
+			if (playIndex1 > FrameIndex1 - 2)	//end of total animation?
+			{
+				printf("termina anim\n");
+				playIndex1 = 0;
+				play2 = false;
+			}
+			else //Next frame interpolations
+			{
+				i_curr_steps1 = 0; //Reset counter
+								  //Interpolation
+				interpolation2();
+			}
+		}
+		else
+		{
+			//Draw animation
+
+			posX1 += KeyFrame1[playIndex].incX1;
+			posY1 += KeyFrame1[playIndex].incY1;
+			posZ1 += KeyFrame1[playIndex].incZ1;
+
+			rotBal += KeyFrame1[playIndex].rotInc6;
+
+			i_curr_steps1++;
+		}
+
+	}
+}
 
 
 // Is called whenever a key is pressed/released via GLFW
@@ -1369,13 +1354,34 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 			i_curr_steps = 0;
 			
 
-		}/*
+		}
 		else
 		{
 			play = false;
-		}*/
+		}
 
 	}
+
+	if (keys[GLFW_KEY_V])
+	{
+		if (play2 == false && (FrameIndex1 >= 0))
+		{
+
+			interpolation2();
+			play2 = true;
+			Sali2();
+			playIndex1 = 0;
+			i_curr_steps1 = 0;
+
+
+		}
+		else
+		{
+			play = false;
+		}
+
+	}
+
 
 	if (keys[GLFW_KEY_K])
 	{
