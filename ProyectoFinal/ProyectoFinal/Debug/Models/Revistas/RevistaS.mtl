@@ -1,0 +1,26 @@
+newmtl scavvermagazine_None
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd revistaS.png
+Ni 1.00
+Ks 0.80 0.80 0.80
+Ns 0.00
+newmtl scavvermagazine_None_18_paper_stack_lr_700x700_jpg
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 18_paper-stack_lr-700x700.jpg
+Ni 1.00
+Ks 0.80 0.80 0.80
+Ns 0.00
+newmtl scavvermagazine_None_magazine_cover_jpg
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.80 0.80 0.80
+Ns 0.00
